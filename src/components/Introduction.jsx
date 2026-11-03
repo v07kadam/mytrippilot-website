@@ -1,18 +1,32 @@
+import { STEPS } from '../content.js'
+
 export default function Introduction() {
   return (
     <section className="section intro" id="about">
-      <div className="container intro-inner">
-        <p className="eyebrow">About MyTripPilot</p>
-        <h2>Travel money, simplified</h2>
-        <p>
-          Group trips are fun until it is time to settle up. MyTripPilot gives every trip
-          a shared space for members, budgets, expenses and balances, so everyone sees the
-          same numbers and nobody has to chase receipts or spreadsheets.
-        </p>
-        <p>
-          Built for travel in India, it works in ₹ by default and turns your trip data into
-          reports you can share with your group or keep for your own records.
-        </p>
+      <div className="container">
+        <div className="section-head center reveal">
+          <p className="eyebrow">About MyTripPilot</p>
+          <h2>Group trips are fun. Settling up should be too.</h2>
+          <p className="section-lead">
+            MyTripPilot gives every trip a shared space for members, budgets, expenses and balances.
+            Everyone sees the same numbers, so nobody has to chase receipts or maintain spreadsheets.
+          </p>
+        </div>
+
+        <ol className="steps" id="how-it-works">
+          {STEPS.map((step, index) => (
+            <li className={`step step-${step.accent} reveal`} key={step.id}>
+              <div className="step-media">
+                <img src={step.image} alt={step.alt} width="720" height="540" loading="lazy" decoding="async" />
+              </div>
+              <div className="step-body">
+                <span className="step-num">Step {index + 1}</span>
+                <h3>{step.title}</h3>
+                <p>{step.description}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   )

@@ -1,16 +1,22 @@
 :root {
   --navy: #0b3b5c;
+  --navy-deep: #082a42;
   --ocean: #1769aa;
+  --app-blue: #3498db;
   --teal: #2ec4b6;
+  --green: #27ae60;
+  --orange: #e67e22;
   --sun: #f5a623;
   --ink: #1b2a3a;
   --muted: #5b6b7b;
   --line: #e3eaf1;
   --surface: #ffffff;
-  --sand: #f7f9fb;
+  --sand: #f5f8fb;
 
   --radius: 14px;
+  --radius-lg: 24px;
   --shadow: 0 10px 30px rgba(11, 59, 92, 0.12);
+  --shadow-lg: 0 30px 60px -20px rgba(8, 42, 66, 0.45);
 
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   line-height: 1.6;
@@ -38,8 +44,18 @@ body {
 h1,
 h2,
 h3,
-p {
+p,
+ul,
+ol,
+dl,
+dd {
   margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
 }
 
 [id] {

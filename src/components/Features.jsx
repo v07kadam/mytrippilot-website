@@ -1,48 +1,43 @@
-import { FEATURES } from '../content.js'
-
-const ICONS = {
-  trip: (
-    <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Zm0-8.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-  ),
-  expense: (
-    <>
-      <rect x="3" y="6" width="18" height="13" rx="2" />
-      <path d="M3 10h18M7 15h4" />
-    </>
-  ),
-  scan: (
-    <>
-      <path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2" />
-      <path d="M7 12h10" />
-    </>
-  ),
-  report: (
-    <>
-      <path d="M6 3h8l4 4v14H6z" />
-      <path d="M14 3v4h4M9 13h6M9 17h6" />
-    </>
-  ),
-}
+import { SHOWCASES } from '../content.js'
+import PhoneFrame from './PhoneFrame.jsx'
+import Icon from './Icon.jsx'
 
 export default function Features() {
   return (
     <section className="section features" id="features">
       <div className="container">
-        <div className="section-head">
+        <div className="section-head center reveal">
           <p className="eyebrow">Key features</p>
-          <h2>Everything a group trip needs</h2>
+          <h2>Everything your group trip needs</h2>
+          <p className="section-lead">
+            From the first plan to the final settle-up, MyTripPilot covers the whole trip.
+          </p>
         </div>
 
-        <div className="feature-grid">
-          {FEATURES.map((feature) => (
-            <article className="feature-card" key={feature.id}>
-              <span className="feature-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  {ICONS[feature.icon]}
-                </svg>
-              </span>
-              <h3>{feature.title}</h3>
-              <p>{feature.description}</p>
+        <nav className="feature-tabs" aria-label="Feature shortcuts">
+          {SHOWCASES.map((item) => (
+            <a key={item.id} href={`#${item.id}`}>{item.eyebrow}</a>
+          ))}
+        </nav>
+
+        <div className="showcases">
+          {SHOWCASES.map((item, index) => (
+            <article className={`showcase${index % 2 ? ' is-reversed' : ''}`} id={item.id} key={item.id}>
+              <div className="showcase-copy reveal">
+                <p className="eyebrow">{item.eyebrow}</p>
+                <h3>{item.title}</h3>
+                <p className="showcase-lead">{item.description}</p>
+                <ul className="checklist">
+                  {item.points.map((point) => (
+                    <li key={point}><span className="tick"><Icon name="check" /></span>{point}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className={`showcase-media reveal${item.screens.length > 1 ? ' is-pair' : ''}`}>
+                {item.screens.map((screen) => (
+                  <PhoneFrame key={screen.alt} src={screen.src} alt={screen.alt} />
+                ))}
+              </div>
             </article>
           ))}
         </div>

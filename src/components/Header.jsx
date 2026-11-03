@@ -1,26 +1,47 @@
+import { useEffect, useState } from 'react'
 import { DOWNLOAD_APP_URL, NAV_LINKS } from '../content.js'
+import BrandMark from './BrandMark.jsx'
+import Icon from './Icon.jsx'
 
 export default function Header() {
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    if (!open) return undefined
+    const onKey = (e) => e.key === 'Escape' && setOpen(false)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
+
+  const close = () => setOpen(false)
+
   return (
-    <header className="site-header">
+    <header className={`site-header${open ? ' is-open' : ''}`}>
       <div className="container header-inner">
-        <a className="brand" href="#top" aria-label="MyTripPilot home">
-          <svg className="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
-            <rect width="32" height="32" rx="8" fill="#0b3b5c" />
-            <path d="M5 22 Q16 4 27 12" fill="none" stroke="#f5a623" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="1.5 4" />
-            <circle cx="5" cy="22" r="2.5" fill="#ffffff" />
-            <circle cx="27" cy="12" r="3" fill="#2ec4b6" />
-          </svg>
+        <a className="brand" href="#top" aria-label="MyTripPilot home" onClick={close}>
+          <BrandMark />
           <span>MyTripPilot</span>
         </a>
 
-        <nav className="site-nav" aria-label="Primary">
+        <nav className="site-nav" id="site-nav" aria-label="Primary">
           {NAV_LINKS.map((link) => (
-            <a key={link.label} href={link.href}>{link.label}</a>
+            <a key={link.label} href={link.href} onClick={close}>{link.label}</a>
           ))}
+          <a className="btn btn-primary nav-download" href={DOWNLOAD_APP_URL} onClick={close}>Download App</a>
         </nav>
 
-        <a className="btn btn-primary btn-sm" href={DOWNLOAD_APP_URL}>Download App</a>
+        <a className="btn btn-primary btn-sm header-download" href={DOWNLOAD_APP_URL}>Download App</a>
+
+        <button
+          type="button"
+          className="menu-toggle"
+          aria-expanded={open}
+          aria-controls="site-nav"
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          onClick={() => setOpen((v) => !v)}
+        >
+          <Icon name={open ? 'close' : 'menu'} />
+        </button>
       </div>
     </header>
   )

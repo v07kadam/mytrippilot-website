@@ -20,12 +20,16 @@ Requires Node.js 20.19+ or 22.12+.
 ```
 public/CNAME                   Custom domain (copied to dist/ on build)
 public/favicon.svg             Site icon
-src/content.js                 Copy, nav links, feature list, footer links, download URL placeholder
-src/components/                Header, Hero, Introduction, Features, Footer
+public/og-image.png            1200x630 social share image
+src/content.js                 All page copy: nav, stats, steps, feature showcases, trip types, FAQ, footer, download URL
+src/assets/screens/            App screenshots and illustrations (WebP, cropped and resized)
+src/components/                Header, Hero, Introduction (how it works), Features, TripTypes, Faq, DownloadCta, Footer
 .github/workflows/deploy.yml   Build and deploy to GitHub Pages on push to main
 ```
 
-Update `DOWNLOAD_APP_URL` and the placeholder `#` links in `src/content.js` once the app store / APK links and legal pages exist.
+Update `DOWNLOAD_APP_URL` in `src/content.js` once the app store / APK link exists. Privacy Policy, Terms and contact emails are also set in `src/content.js`.
+
+App screenshots in `src/assets/screens/` are 600px-wide WebP exports of the original phone screenshots (status bars trimmed). Replace them with files of the same name to refresh the visuals.
 
 ## Deployment
 
