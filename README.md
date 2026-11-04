@@ -19,7 +19,10 @@ Requires Node.js 20.19+ or 22.12+.
 
 ```
 public/CNAME                   Custom domain (copied to dist/ on build)
-public/favicon.svg             Site icon
+public/favicon.svg             Site icon (SVG)
+public/favicon.ico             Multi-size ICO (16, 32, 48, 64)
+public/favicon-96x96.png       96x96 PNG icon
+public/apple-touch-icon.png    180x180 Apple touch icon
 public/og-image.png            1200x630 social share image
 src/content.js                 All page copy: nav, stats, steps, feature showcases, trip types, FAQ, footer, download URL
 src/assets/screens/            App screenshots and illustrations (WebP, cropped and resized)
