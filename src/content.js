@@ -185,6 +185,6 @@ export const CONTACT_EMAILS = [
 export const FOOTER_LINKS = [
   { label: 'About', href: '#about' },
   { label: 'Contact', href: 'mailto:support@mytrippilot.in' },
-  { label: 'Privacy Policy', href: 'https://v07kadam.github.io/mytrippilot-privacy/index.html', external: true },
-  { label: 'Terms', href: 'https://v07kadam.github.io/mytrippilot-privacy/terms.html', external: true },
+  { label: 'Privacy Policy', href: 'https://mytrippilot.in/privacy-policy' },
+  { label: 'Terms', href: 'https://mytrippilot.in/terms' },
 ]

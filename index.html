@@ -9,6 +9,16 @@
     <meta name="author" content="MyTripPilot" />
     <meta name="theme-color" content="#0b3b5c" />
     <link rel="canonical" href="https://mytrippilot.in/" />
+    <script>
+      (() => {
+        const legalPaths = ['/privacy-policy', '/terms', '/delete-account', '/confirm'];
+        if (legalPaths.includes(window.location.pathname)) {
+          window.location.replace(
+            `${window.location.pathname}/${window.location.search}${window.location.hash}`,
+          );
+        }
+      })();
+    </script>
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />

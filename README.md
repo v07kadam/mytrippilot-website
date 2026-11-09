@@ -29,7 +29,33 @@ src/components/                Header, Hero, Introduction (how it works), Featur
 .github/workflows/deploy.yml   Build and deploy to GitHub Pages on push to main
 ```
 
-Update `DOWNLOAD_APP_URL` in `src/content.js` once the app store / APK link exists. Privacy Policy, Terms and contact emails are also set in `src/content.js`.
+Update `DOWNLOAD_APP_URL` in `src/content.js` once the app store / APK link exists. Footer links and contact emails are also set in `src/content.js`.
+
+The legal and account-confirmation pages are static files under `public/`:
+
+| Page | URL |
+|---|---|
+| Privacy Policy | `https://mytrippilot.in/privacy-policy` |
+| Terms | `https://mytrippilot.in/terms` |
+| Delete Account | `https://mytrippilot.in/delete-account` |
+| Confirmation / password reset | `https://mytrippilot.in/confirm` |
+
+Keep the matching `index.html` files in these directories. Vite copies them to
+`dist/`; GitHub Pages serves each directory's `index.html`. The `/confirm`
+redirect must also be allowed in Supabase Auth URL Configuration.
+The exact no-trailing-slash paths normalize to their directory URLs; the
+confirmation redirect preserves its query string and fragment.
+
+Deploy this website before releasing the app update. In Supabase Auth URL
+Configuration, allow `https://mytrippilot.in/confirm` and check that the
+confirmation and password-recovery email templates use the requested redirect
+URL.
+
+The existing `v07kadam.github.io/mytrippilot-privacy` URLs are hosted outside
+these two repositories. Preserving them requires a separate update to that
+legacy GitHub Pages project. Its confirmation redirect must preserve both the
+query string and fragment because Supabase may return authentication data in
+either location.
 
 App screenshots in `src/assets/screens/` are 600px-wide WebP exports of the original phone screenshots (status bars trimmed). Replace them with files of the same name to refresh the visuals.
 

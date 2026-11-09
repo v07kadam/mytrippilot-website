@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyTripPilot</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f8fafc; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    .card {
+      background: #fff; border-radius: 16px; padding: 40px 32px;
+      max-width: 420px; width: 100%; text-align: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    .icon { font-size: 56px; margin-bottom: 16px; }
+    h1 { color: #2c3e50; font-size: 22px; margin-bottom: 10px; }
+    p { color: #6b7280; line-height: 1.6; font-size: 15px; margin-bottom: 8px; }
+    input {
+      width: 100%; padding: 13px 16px; border: 1.5px solid #ddd;
+      border-radius: 10px; font-size: 15px; margin-bottom: 12px; outline: none;
+      color: #2c3e50;
+    }
+    input:focus { border-color: #3b82f6; }
+    button {
+      width: 100%; padding: 14px; background: #3b82f6; color: #fff;
+      border: none; border-radius: 10px; font-size: 16px; font-weight: 600;
+      cursor: pointer; margin-top: 4px;
+    }
+    button:hover { background: #2563eb; }
+    button:disabled { background: #93c5fd; cursor: default; }
+    .badge {
+      display: inline-block; margin-top: 20px;
+      background: #d1fae5; color: #065f46;
+      padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: 600;
+    }
+    .error { color: #dc2626; font-size: 13px; margin-top: 8px; margin-bottom: 0; }
+    .hint { color: #9ca3af; font-size: 13px; margin-top: 10px; }
+    .back { display: block; margin-top: 24px; color: #2563eb; font-size: 14px; text-decoration: none; }
+    .back:hover { text-decoration: underline; }
+    #resetForm { margin-top: 20px; text-align: left; }
+    #actions { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon" id="icon">⏳</div>
+    <h1 id="title">Please wait...</h1>
+    <p id="body">Verifying your link.</p>
+    <div id="resetForm" style="display:none">
+      <input type="password" id="pw1" placeholder="New password (min 8 characters)" />
+      <input type="password" id="pw2" placeholder="Confirm new password" />
+      <p class="error" id="pwError" style="display:none"></p>
+      <button id="setBtn">Set New Password</button>
+    </div>
+    <div id="badge" style="display:none"></div>
+    <div id="actions" style="display:none">
+      <button id="openAppBtn">Open MyTripPilot</button>
+      <p class="hint" id="actionsHint"></p>
+    </div>
+    <a href="https://mytrippilot.in/privacy-policy" class="back">← Back to Privacy Policy</a>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var SUPABASE_URL = 'https://njcgsrwezavsxmgfufzb.supabase.co';
+      var SUPABASE_KEY = 'sb_publishable_ZIMUaDFYEppDSPSyFeAeXA_5g8NTb4f';
+      var APP_SCHEME = 'mytrippilot://';
+      var MIN_PASSWORD_LENGTH = 8;
+      var COMMON_PASSWORDS = [
+        '123456', '123456789', '12345678', '12345', '1234567', '1234567890',
+        '111111', '000000', '121212', '123123', '112233', '654321',
+        'password', 'password1', 'password123', 'passw0rd', 'qwerty',
+        'qwerty123', 'qwertyui', 'qwertyuiop', 'qazwsx', '1qaz2wsx', '123qwe',
+        'zxcvbnm', 'asdfgh', 'iloveyou', 'admin', 'welcome', 'letmein',
+        'abc123', 'monkey', 'dragon', 'shadow', 'master', 'sunshine'
+      ];
+
+      var icon = document.getElementById('icon');
+      var title = document.getElementById('title');
+      var body = document.getElementById('body');
+      var badge = document.getElementById('badge');
+      var actions = document.getElementById('actions');
+      var actionsHint = document.getElementById('actionsHint');
+      var resetForm = document.getElementById('resetForm');
+
+      var settled = false;
+
+      function showSuccess(heading, message, badgeText) {
+        settled = true;
+        icon.textContent = '✅';
+        title.textContent = heading;
+        body.textContent = message;
+        resetForm.style.display = 'none';
+        badge.className = 'badge';
+        badge.style.background = '#d1fae5';
+        badge.style.color = '#065f46';
+        badge.textContent = badgeText;
+        badge.style.display = 'inline-block';
+        actions.style.display = 'block';
+        actionsHint.textContent = 'If the app does not open, launch MyTripPilot and sign in.';
+      }
+
+      function showError(heading, message, badgeText) {
+        settled = true;
+        icon.textContent = '❌';
+        title.textContent = heading;
+        body.textContent = message;
+        resetForm.style.display = 'none';
+        badge.className = 'badge';
+        badge.style.background = '#fee2e2';
+        badge.style.color = '#991b1b';
+        badge.textContent = badgeText || 'Please request a new link';
+        badge.style.display = 'inline-block';
+        actions.style.display = 'block';
+        actionsHint.textContent = 'Open MyTripPilot to request a new link.';
+      }
+
+      document.getElementById('openAppBtn').addEventListener('click', function () {
+        window.location.href = APP_SCHEME;
+      });
+
+      // Supabase params arrive in the fragment (implicit) or the query string (PKCE).
+      function readParams() {
+        var hash = new URLSearchParams(String(window.location.hash || '').replace(/^#/, ''));
+        var query = new URLSearchParams(String(window.location.search || ''));
+        return function (key) { return hash.get(key) || query.get(key); };
+      }
+
+      function describeError(raw) {
+        var text = String(raw || '').replace(/\+/g, ' ');
+        try { text = decodeURIComponent(text); } catch (e) { /* keep raw text */ }
+        if (/expired/i.test(text)) return 'This link has expired. Request a new email from the app and try again.';
+        if (/already|used/i.test(text)) return 'This link has already been used. You can sign in from the app.';
+        if (/invalid|malformed/i.test(text)) return 'This link is invalid. Request a new email from the app and try again.';
+        return text || 'This link could not be verified.';
+      }
+
+      function getClient() {
+        if (!window.supabase || typeof window.supabase.createClient !== 'function') return null;
+        try {
+          return window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: { detectSessionInUrl: false, persistSession: false }
+          });
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function startRecovery(client, accessToken, refreshToken) {
+        icon.textContent = '🔑';
+        title.textContent = 'Set your new password';
+        body.textContent = 'Enter and confirm a new password below.';
+        resetForm.style.display = 'block';
+        settled = true;
+
+        var pwErr = document.getElementById('pwError');
+        var btn = document.getElementById('setBtn');
+
+        btn.addEventListener('click', function () {
+          var pw1 = document.getElementById('pw1').value;
+          var pw2 = document.getElementById('pw2').value;
+          pwErr.style.display = 'none';
+
+          if (pw1.length < MIN_PASSWORD_LENGTH) {
+            pwErr.textContent = 'Password must be at least ' + MIN_PASSWORD_LENGTH + ' characters.';
+            pwErr.style.display = 'block';
+            return;
+          }
+          if (COMMON_PASSWORDS.indexOf(pw1.toLowerCase()) !== -1) {
+            pwErr.textContent = 'This password is too common. Choose something harder to guess.';
+            pwErr.style.display = 'block';
+            return;
+          }
+          if (pw1 !== pw2) {
+            pwErr.textContent = 'Passwords do not match.';
+            pwErr.style.display = 'block';
+            return;
+          }
+
+          btn.disabled = true;
+          btn.textContent = 'Saving...';
+
+          client.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
+            .then(function (res) {
+              if (res.error) throw res.error;
+              return client.auth.updateUser({ password: pw1 });
+            })
+            .then(function (res) {
+              if (res.error) throw res.error;
+              showSuccess(
+                'Password updated',
+                'Your password has been changed. Open MyTripPilot and sign in with your new password.',
+                '✓ Done'
+              );
+            })
+            .catch(function (e) {
+              pwErr.textContent = describeError(e && e.message);
+              pwErr.style.display = 'block';
+              btn.disabled = false;
+              btn.textContent = 'Set New Password';
+            });
+        });
+      }
+
+      function init() {
+        var get = readParams();
+
+        var errorParam = get('error_description') || get('error_code') || get('error');
+        if (errorParam) {
+          showError('Link expired or invalid', describeError(errorParam));
+          return;
+        }
+
+        var type = get('type');
+        var accessToken = get('access_token');
+        var refreshToken = get('refresh_token');
+        var tokenHash = get('token_hash');
+        var code = get('code');
+
+        if (type === 'recovery' && accessToken) {
+          var recoveryClient = getClient();
+          if (!recoveryClient) {
+            showError(
+              'Could not load the reset form',
+              'We could not reach the authentication service from this browser. Check your connection or disable any content blocker, then open this link again.',
+              'Please try again'
+            );
+            return;
+          }
+          startRecovery(recoveryClient, accessToken, refreshToken);
+          return;
+        }
+
+        if (tokenHash && type) {
+          var otpClient = getClient();
+          if (!otpClient) {
+            showError(
+              'Could not verify this link',
+              'We could not reach the authentication service from this browser. Check your connection or disable any content blocker, then open this link again.',
+              'Please try again'
+            );
+            return;
+          }
+          otpClient.auth.verifyOtp({ token_hash: tokenHash, type: type })
+            .then(function (res) {
+              if (res.error) throw res.error;
+              if (type === 'recovery') {
+                var session = res.data && res.data.session;
+                startRecovery(otpClient, session && session.access_token, session && session.refresh_token);
+              } else {
+                showSuccess(
+                  'Email verified successfully',
+                  'Your MyTripPilot account is active. Open the app and sign in to continue.',
+                  '✓ Account activated'
+                );
+              }
+            })
+            .catch(function (e) {
+              showError('Link expired or invalid', describeError(e && e.message));
+            });
+          return;
+        }
+
+        // PKCE links are verified by Supabase before this redirect, so treat an
+        // exchange failure here (different browser, no code verifier) as success.
+        if (code) {
+          showSuccess(
+            'Email verified successfully',
+            'Your MyTripPilot account is active. Open the app and sign in to continue.',
+            '✓ Account activated'
+          );
+          return;
+        }
+
+        if (accessToken || type === 'signup' || type === 'email' || type === 'magiclink') {
+          showSuccess(
+            'Email verified successfully',
+            'Your MyTripPilot account is active. Open the app and sign in to continue.',
+            '✓ Account activated'
+          );
+          return;
+        }
+
+        showError(
+          'Nothing to verify',
+          'This page was opened without a valid confirmation link. Open the confirmation link from your email again.',
+          'Request a new link'
+        );
+      }
+
+      // Never leave the page sitting on "Please wait...".
+      setTimeout(function () {
+        if (!settled) {
+          showError(
+            'Verification timed out',
+            'We could not confirm this link in time. Check your connection and open the link from your email again.',
+            'Please try again'
+          );
+        }
+      }, 8000);
+
+      try {
+        init();
+      } catch (e) {
+        showError('Something went wrong', describeError(e && e.message), 'Please try again');
+      }
+    })();
+  </script>
+</body>
+</html>
