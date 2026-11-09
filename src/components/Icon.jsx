@@ -31,6 +31,25 @@ const PATHS = {
       <path d="M5 4h11l-2 4 2 4H5" />
     </>
   ),
+  route: (
+    <>
+      <circle cx="6" cy="19" r="3" />
+      <circle cx="18" cy="5" r="3" />
+      <path d="M9 19h4a4 4 0 0 0 0-8h-2a4 4 0 0 1 0-8h4" />
+    </>
+  ),
+  map: (
+    <>
+      <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z" />
+      <path d="M9 3v15M15 6v15" />
+    </>
+  ),
+  compass: (
+    <>
+      <circle cx="12" cy="12" r="10" />
+      <path d="m16.2 7.8-4.1 8.4-4.3-4.3 8.4-4.1z" />
+    </>
+  ),
   trash: (
     <>
       <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
