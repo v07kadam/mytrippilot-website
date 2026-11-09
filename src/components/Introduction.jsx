@@ -29,7 +29,7 @@ export default function Introduction() {
           <div className="about-story-grid reveal">
             <div className="about-story-copy">
               <p className="eyebrow">About MyTripPilot</p>
-              <h2>Made for the trip—and the shared costs that come with it.</h2>
+              <h2>Made for the trip and the shared costs that come with it.</h2>
               <p>
                 MyTripPilot was built to simplify trip organization, expense tracking and shared
                 travel spending. It brings trip details, budgets, members and expenses into one
